@@ -1,63 +1,152 @@
 import streamlit as st
-from streamlit_chat import message
-from backend import run_llm
-from rag2 import run_llm2
-st.header("LangChain🦜🔗 ALI ChatBOT")
 
-# Initialize session state if not already present
-if (
-    "chat_answers_history" not in st.session_state
-    and "user_prompt_history" not in st.session_state
-    and "chat_history" not in st.session_state
-    and "page" not in st.session_state  # Add 'page' to manage navigation
-):
-    st.session_state["chat_answers_history"] = []
-    st.session_state["user_prompt_history"] = []
-    st.session_state["chat_history"] = []
-    st.session_state["page"] = "chat"  # Default page is chat
 
-# Button to navigate to 'Generate Email' page
-if st.button("Generate Email"):
-    st.session_state["page"] = "generate_email"
+if "chat_history" not in st.session_state:
+        st.session_state["chat_history"] = []
 
-# Conditional rendering based on the page
-if st.session_state["page"] == "chat":
-    # Chatbot interface
-    prompt = st.text_input("Prompt", placeholder="Enter your message here...") or st.button("Submit")
 
-    if prompt:
+def intro():
+    import streamlit as st
+    from Backend.backend import run_llm
+
+    st.write("### LangChain🦜🔗 ALI ChatBOT")
+    
+    
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    
+    # Display chat messages from history
+    for message_data in st.session_state.messages:
+        with st.chat_message(message_data["role"]):
+            st.markdown(message_data["content"])
+
+    # Input box for user prompt
+    if prompt := st.chat_input("Enter your message here..."):
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        # Generate response using the LLM
         with st.spinner("Generating response..."):
             generated_response = run_llm(
                 query=prompt,
                 chat_history=st.session_state["chat_history"]
             )
-
-            st.session_state["user_prompt_history"].append(prompt)
-            st.session_state["chat_answers_history"].append(generated_response)
             st.session_state["chat_history"].append(("human", prompt))
             st.session_state["chat_history"].append(("ai", generated_response))
 
-    # Display the chat history with unique keys
-    if st.session_state["chat_answers_history"]:
-        for i, (generated_response, user_query) in enumerate(
-            zip(st.session_state["chat_answers_history"], st.session_state["user_prompt_history"])
-        ):
-            # Unique key for each user message
-            message(user_query, is_user=True, key=f"user_msg_{i}")
-            # Unique key for each AI response
-            message(generated_response, key=f"ai_msg_{i}")
+            with st.chat_message("assistant"):
+                st.markdown(generated_response)
+            st.session_state.messages.append({"role": "assistant", "content": generated_response})
 
-elif st.session_state["page"] == "generate_email":
-    # Generate Email Page content
-    st.header("Generate Email")
+
+def generate_email():
+
+    import streamlit as st
+
+    st.session_state.messages = []  # Clear chat history on new chat
+    st.session_state["chat_history"] = []
+
+    run_json()
+    st.write("### ALI ChatBOT 🦜🔗 Generate Email")
+
+    if "email_drafts" not in st.session_state:
+        st.session_state.email_drafts = []
     
-    prompt1 = st.text_input("Prompt", placeholder="Enter your product here...") or st.button("Submit")
-    if prompt1:
+    # Display chat messages from history
+    for draft_data in st.session_state.email_drafts:
+        with st.chat_message(draft_data["role"]):
+            st.markdown(draft_data["content"])
+    
+
+    from Backend.rag2 import run_llm2
+
+    if prompt := st.chat_input("Enter your product here..."):
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        st.session_state.email_drafts.append({"role": "user", "content": prompt})
+
+        # Generate response using the LLM
         with st.spinner("Generating response..."):
             generated_response = run_llm2(
-                query=prompt1,
+                query=prompt
             )
-            message(generated_response)
-     
+
+            with st.chat_message("assistant"):
+                st.markdown(generated_response)
+            st.session_state.email_drafts.append({"role": "assistant", "content": generated_response})
+
+def run_json():
+    from Backend.backend import run_json
+
+    # Add a flag to ensure JSON is generated only once
+    if "json_generated" not in st.session_state:
+        st.session_state.json_generated = False
+
+    # Check if JSON has not been generated yet
+    if not st.session_state.json_generated:
+        # Generate and save JSON
+        print("Run JSON")
+        json_output = run_json(chat_history=st.session_state["chat_history"])
+        file_path = "Database/gathered.json"
+        with open(file_path, "w") as file:
+            file.write(json_output)
+        st.success(f"JSON data has been saved to {file_path}.")
+        
+        # Set the flag to indicate that JSON has been generated
+        st.session_state.json_generated = True
+
+
+
+with st.sidebar:
     
+    st.sidebar.image("img/ali.png", width=250) 
+
+    page_names_to_funcs = {
+    "Gather Information": intro,
+    "Generate Email": generate_email
     
+}
+  
+    demo_name = st.sidebar.selectbox("### Choose a page", page_names_to_funcs.keys())
+    
+    #st.markdown("### ALI ChatBOT 🦜🔗")
+    #st.markdown("<span style='color: red;'>New</span>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)  # This adds a line break
+    st.markdown("<br>", unsafe_allow_html=True)  # This adds a line break
+
+        # Create a single column layout
+    col1, col2, col3 = st.columns([1, 2, 1])  # You can adjust the ratios
+
+    with col2:  # The center column
+        # Button for new chat
+        if st.button("New Chat"):
+            st.session_state.messages = []  # Clear chat history on new chat
+            st.session_state.email_drafts = []
+            st.session_state["chat_history"] = []
+
+    # Sidebar footer for license activation
+    st.markdown("---")
+    st.write("© 2024 Ali Chatbot. All rights reserved.")
+    st.markdown(
+        """
+        <p>
+        <a href="https://github.com/ammarzaarour/Chatbot-OpenAI-RAG" target="_blank">
+        <img src="https://img.icons8.com/ios-glyphs/30/000000/github.png"/>
+        </a>
+        <a href="https://t.me/telegram_channel" target="_blank">
+        <img src="https://img.icons8.com/ios-glyphs/30/000000/telegram-app.png"/>
+        </a>
+        <a href="ammar.rushdi.zaarour@gmail.com" target="_blank">
+        <img src="https://img.icons8.com/ios-glyphs/30/000000/email.png"/>
+        </a>
+        </p>
+        """, unsafe_allow_html=True
+    )
+
+
+
+page_names_to_funcs[demo_name]()
+
+
+

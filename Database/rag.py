@@ -8,7 +8,6 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_openai import OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
-from langchain import VectorDBQA, OpenAI
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
