@@ -1,11 +1,11 @@
 {
   "Customer Persona": {
-    "Job Title": "Marketing Manager",
-    "Job Seniority": "executive",
-    "Department": "Marketing Department"
+    "Job Title": "",
+    "Job Seniority": "",
+    "Department": ""
   },
   "Company Persona": {
-    "Country": "Lebanon",
-    "City": "Beirut"
+    "Country": "",
+    "City": ""
   }
 }

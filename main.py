@@ -79,14 +79,12 @@ def generate_email():
             st.session_state.email_drafts.append({"role": "assistant", "content": generated_response})
 
 def run_json():
-    
+
     from Backend.backend import run_json
 
     # Add a flag to ensure JSON is generated only once
     if "json_generated" not in st.session_state:
         st.session_state.json_generated = False
-
-    print(st.session_state.json_generated)
 
     # Check if JSON has not been generated yet
     if not st.session_state.json_generated:
