@@ -39,7 +39,7 @@ def run_llm2(query: str):
     gathered_info = json.dumps(static_data, indent=4)
 
     gathered_info = gathered_info.replace("{", "").replace("}", "")
-    print("static one"+gathered_info)
+    #print("static one"+gathered_info)
 
     # Create a proper PromptTemplate with both context and input
     # 'context' will represent the documents retrieved, and 'input' is the user query

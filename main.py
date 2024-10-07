@@ -8,12 +8,15 @@ if "chat_history" not in st.session_state:
 def intro():
     import streamlit as st
     from Backend.backend import run_llm
+    
 
     st.write("### LangChain🦜🔗 ALI ChatBOT")
     
     
     if "messages" not in st.session_state:
         st.session_state.messages = []
+    st.session_state.json_generated = False
+    st.session_state.email_drafts = []
     
     # Display chat messages from history
     for message_data in st.session_state.messages:
@@ -44,8 +47,7 @@ def generate_email():
 
     import streamlit as st
 
-    st.session_state.messages = []  # Clear chat history on new chat
-    st.session_state["chat_history"] = []
+   
 
     run_json()
     st.write("### ALI ChatBOT 🦜🔗 Generate Email")
@@ -77,16 +79,19 @@ def generate_email():
             st.session_state.email_drafts.append({"role": "assistant", "content": generated_response})
 
 def run_json():
+    
     from Backend.backend import run_json
 
     # Add a flag to ensure JSON is generated only once
     if "json_generated" not in st.session_state:
         st.session_state.json_generated = False
 
+    print(st.session_state.json_generated)
+
     # Check if JSON has not been generated yet
     if not st.session_state.json_generated:
         # Generate and save JSON
-        print("Run JSON")
+        
         json_output = run_json(chat_history=st.session_state["chat_history"])
         file_path = "Database/gathered.json"
         with open(file_path, "w") as file:
@@ -95,6 +100,8 @@ def run_json():
         
         # Set the flag to indicate that JSON has been generated
         st.session_state.json_generated = True
+        st.session_state.messages = []  # Clear chat history on new chat
+        st.session_state["chat_history"] = []
 
 
 
