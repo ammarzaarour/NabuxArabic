@@ -18,7 +18,7 @@ from langchain_pinecone import PineconeVectorStore
 
 # Initialize embeddings and document search
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-docsearch = PineconeVectorStore(index_name="demo", embedding=embeddings)
+docsearch = PineconeVectorStore(index_name="geozar", embedding=embeddings)
 
 # Initialize the chat model
 chat = ChatOpenAI(verbose=True, temperature=0)

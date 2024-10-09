@@ -15,6 +15,7 @@ def intro():
     
     if "messages" not in st.session_state:
         st.session_state.messages = []
+
     st.session_state.json_generated = False
     st.session_state.email_drafts = []
     
@@ -100,6 +101,7 @@ def run_json():
         st.session_state.json_generated = True
         st.session_state.messages = []  # Clear chat history on new chat
         st.session_state["chat_history"] = []
+        
 
 
 
@@ -112,8 +114,8 @@ with st.sidebar:
     "Generate Email": generate_email
     
 }
-  
-    demo_name = st.sidebar.selectbox("### Choose a page", page_names_to_funcs.keys())
+    disabled_status = True
+    demo_name = st.sidebar.selectbox("### Choose a page", page_names_to_funcs.keys())#,disabled=disabled_status)
     
     #st.markdown("### ALI ChatBOT 🦜🔗")
     #st.markdown("<span style='color: red;'>New</span>", unsafe_allow_html=True)
