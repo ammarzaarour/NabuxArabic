@@ -23,44 +23,24 @@ docsearch = PineconeVectorStore(index_name="geozar", embedding=embeddings)
 # Initialize the chat model
 chat = ChatOpenAI(verbose=True, temperature=0)
 
-def read_static_data(file_path: str) -> dict:
-    with open(file_path, 'r') as file:
-        static_data = json.load(file)  # Load the JSON content into a Python dictionary
-    return static_data
-
-
-
-
 
 def run_llm2(query: str):
-    # Example usage: Reading static data from the JSON file
-    static_data = read_static_data('Database/gathered.json')
-    # Define the static context you want to add to every prompt
-    gathered_info = json.dumps(static_data, indent=4)
-
-    gathered_info = gathered_info.replace("{", "").replace("}", "")
-    #print("static one"+gathered_info)
 
     # Create a proper PromptTemplate with both context and input
     # 'context' will represent the documents retrieved, and 'input' is the user query
     prompt_template = PromptTemplate(
         input_variables=["input", "context"],
-        template=f"""If the user query is relevant to the context, create an email. Otherwise, return a message indicating that the query does not match the context.
+        template=f"""You are a helpful teacher called Nabux (نبو إكس), you task is to teach AI for people who know AI. Give examples
+        with equations and real data examples.
+          . reply to users in arabic.
+          {{context}}
 
-    If the user query does not fit the context:
+   when the user asks about algorithm about AI, answer it and link it to how we can use in AI in real example
 
-        - Return a response like: "The query is not related to the product or context provided. Please provide a product-related query."
 
-    Else:
+Important: Don't answer anything not related to AI.
 
-        - According to this gathered information {gathered_info}, create an email to the targeted audience explaining the product according to this context retrieved.
-        - Use this gathered info in email generation.
-        Retrieved Documents:
-        {{context}}
-
-        Don't make up information. If the user query does not fit the context, provide feedback instead.
-
-        User Query: {{input}}
+    Question: {{input}}
         Assistant Response:
         """
     )

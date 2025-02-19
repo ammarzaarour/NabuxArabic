@@ -11,7 +11,7 @@ from langchain_pinecone import PineconeVectorStore
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
-loader = TextLoader("C:/Users/User/Desktop/Chatbot-OpenAI-RAG/products/GeoZar.txt")
+loader = TextLoader("C:/Users/User/Desktop/NABUX/products/GeoZar.txt")
 
 raw_documents = loader.load()
 print(f"loaded {len(raw_documents)} documents")
@@ -21,6 +21,6 @@ documents = text_splitter.split_documents(raw_documents)
 print(len(documents))
 
 print(f"Going to add {len(documents)} to Pinecone")
-PineconeVectorStore.from_documents(documents, embeddings, index_name="geozar")
+PineconeVectorStore.from_documents(documents, embeddings, index_name="nabux")
 print("****Loading to vectorstore done ***")
 

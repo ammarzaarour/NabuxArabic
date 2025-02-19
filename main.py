@@ -9,9 +9,7 @@ def intro():
     import streamlit as st
     from Backend.backend import run_llm
     
-
-    st.write("### LangChain🦜🔗 ALI ChatBOT")
-    
+    st.write("# NabuX")
     
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -22,12 +20,21 @@ def intro():
     # Display chat messages from history
     for message_data in st.session_state.messages:
         with st.chat_message(message_data["role"]):
-            st.markdown(message_data["content"])
+            # Check if the message contains Arabic characters and render it properly
+            if any("\u0600" <= char <= "\u06FF" for char in message_data["content"]):  # Check if Arabic
+                st.markdown(f'<div style="direction: rtl; font-family: Arial, sans-serif; white-space: pre-wrap;">{message_data["content"]}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(message_data["content"])
 
     # Input box for user prompt
     if prompt := st.chat_input("Enter your message here..."):
         with st.chat_message("user"):
-            st.markdown(prompt)
+            # Check if the message contains Arabic characters and render it properly
+            if any("\u0600" <= char <= "\u06FF" for char in prompt):  # Check if Arabic
+                st.markdown(f'<div style="direction: rtl; font-family: Arial, sans-serif; white-space: pre-wrap;">{prompt}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(prompt)
+        
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         # Generate response using the LLM
@@ -40,18 +47,21 @@ def intro():
             st.session_state["chat_history"].append(("ai", generated_response))
 
             with st.chat_message("assistant"):
-                st.markdown(generated_response)
+                # Check if the generated response contains Arabic characters and render it properly
+                if any("\u0600" <= char <= "\u06FF" for char in generated_response):  # Check if Arabic
+                    st.markdown(f'<div style="direction: rtl; font-family: Arial, sans-serif; white-space: pre-wrap;">{generated_response}</div>', unsafe_allow_html=True)
+                else:
+                    st.markdown(generated_response)
+            
             st.session_state.messages.append({"role": "assistant", "content": generated_response})
+
 
 
 def generate_email():
 
     import streamlit as st
 
-   
-
-    run_json()
-    st.write("### ALI ChatBOT 🦜🔗 Generate Email")
+    st.write("# NabuX")
 
     if "email_drafts" not in st.session_state:
         st.session_state.email_drafts = []
@@ -79,39 +89,18 @@ def generate_email():
                 st.markdown(generated_response)
             st.session_state.email_drafts.append({"role": "assistant", "content": generated_response})
 
-def run_json():
 
-    from Backend.backend import run_json
-
-    # Add a flag to ensure JSON is generated only once
-    if "json_generated" not in st.session_state:
-        st.session_state.json_generated = False
-
-    # Check if JSON has not been generated yet
-    if not st.session_state.json_generated:
-        # Generate and save JSON
-        
-        json_output = run_json(chat_history=st.session_state["chat_history"])
-        file_path = "Database/gathered.json"
-        with open(file_path, "w") as file:
-            file.write(json_output)
-        st.success(f"JSON data has been saved to {file_path}.")
-        
-        # Set the flag to indicate that JSON has been generated
-        st.session_state.json_generated = True
-        st.session_state.messages = []  # Clear chat history on new chat
-        st.session_state["chat_history"] = []
         
 
 
 
 with st.sidebar:
     
-    st.sidebar.image("img/ali.png", width=250) 
+    st.sidebar.image("img/NabuX1.png", width=250) 
 
     page_names_to_funcs = {
-    "Gather Information": intro,
-    "Generate Email": generate_email
+    "أعرف": intro,
+    "أفهم": generate_email
     
 }
     disabled_status = True
@@ -134,7 +123,7 @@ with st.sidebar:
 
     # Sidebar footer for license activation
     st.markdown("---")
-    st.write("© 2024 Ali Chatbot. All rights reserved.")
+    st.write("© 2025 NabuX. All rights reserved.")
     st.markdown(
         """
         <p>
