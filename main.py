@@ -9,7 +9,7 @@ def intro():
     import streamlit as st
     from Backend.backend import run_llm
     
-    st.write("# NabuX")
+    st.write("# Teacher")
     
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -61,7 +61,7 @@ def generate_email():
 
     import streamlit as st
 
-    st.write("# NabuX")
+    st.write("# Teacher")
 
     if "email_drafts" not in st.session_state:
         st.session_state.email_drafts = []
@@ -123,7 +123,7 @@ with st.sidebar:
 
     # Sidebar footer for license activation
     st.markdown("---")
-    st.write("© 2025 NabuX. All rights reserved.")
+    st.write("© 2025 Teacher. All rights reserved.")
     st.markdown(
         """
         <p>
