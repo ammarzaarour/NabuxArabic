@@ -62,7 +62,7 @@ def generate_email():
     import streamlit as st
     from Backend.backendB import run_llm
     
-    st.write("# nأستاذ")
+    st.write("# أستاذ")
     
     if "messages1" not in st.session_state:
         st.session_state.messages1 = []
