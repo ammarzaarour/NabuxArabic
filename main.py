@@ -4,18 +4,20 @@ import streamlit as st
 if "chat_history" not in st.session_state:
         st.session_state["chat_history"] = []
 
+if "chat_history1" not in st.session_state:
+        st.session_state["chat_history1"] = []
+
 
 def intro():
     import streamlit as st
-    from Backend.backend import run_llm
+    from Backend.backendA import run_llm
     
-    st.write("# Teacher")
+    st.write("# أستاذ")
     
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    st.session_state.json_generated = False
-    st.session_state.email_drafts = []
+   
     
     # Display chat messages from history
     for message_data in st.session_state.messages:
@@ -27,7 +29,7 @@ def intro():
                 st.markdown(message_data["content"])
 
     # Input box for user prompt
-    if prompt := st.chat_input("Enter your message here..."):
+    if prompt := st.chat_input("... اسألني شيئاً"):
         with st.chat_message("user"):
             # Check if the message contains Arabic characters and render it properly
             if any("\u0600" <= char <= "\u06FF" for char in prompt):  # Check if Arabic
@@ -56,39 +58,54 @@ def intro():
             st.session_state.messages.append({"role": "assistant", "content": generated_response})
 
 
-
 def generate_email():
-
     import streamlit as st
+    from Backend.backendB import run_llm
+    
+    st.write("# nأستاذ")
+    
+    if "messages1" not in st.session_state:
+        st.session_state.messages1 = []
+    
 
-    st.write("# Teacher")
-
-    if "email_drafts" not in st.session_state:
-        st.session_state.email_drafts = []
     
     # Display chat messages from history
-    for draft_data in st.session_state.email_drafts:
-        with st.chat_message(draft_data["role"]):
-            st.markdown(draft_data["content"])
-    
+    for message_data in st.session_state.messages1:
+        with st.chat_message(message_data["role"]):
+            # Check if the message contains Arabic characters and render it properly
+            if any("\u0600" <= char <= "\u06FF" for char in message_data["content"]):  # Check if Arabic
+                st.markdown(f'<div style="direction: rtl; font-family: Arial, sans-serif; white-space: pre-wrap;">{message_data["content"]}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(message_data["content"])
 
-    from Backend.rag2 import run_llm2
-
-    if prompt := st.chat_input("Enter your product here..."):
+    # Input box for user prompt
+    if prompt := st.chat_input("... اسألني شيئاً"):
         with st.chat_message("user"):
-            st.markdown(prompt)
-        st.session_state.email_drafts.append({"role": "user", "content": prompt})
+            # Check if the message contains Arabic characters and render it properly
+            if any("\u0600" <= char <= "\u06FF" for char in prompt):  # Check if Arabic
+                st.markdown(f'<div style="direction: rtl; font-family: Arial, sans-serif; white-space: pre-wrap;">{prompt}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(prompt)
+        
+        st.session_state.messages1.append({"role": "user", "content": prompt})
 
         # Generate response using the LLM
         with st.spinner("Generating response..."):
-            generated_response = run_llm2(
-                query=prompt
+            generated_response = run_llm(
+                query=prompt,
+                chat_history=st.session_state["chat_history1"]
             )
+            st.session_state["chat_history1"].append(("human", prompt))
+            st.session_state["chat_history1"].append(("ai", generated_response))
 
             with st.chat_message("assistant"):
-                st.markdown(generated_response)
-            st.session_state.email_drafts.append({"role": "assistant", "content": generated_response})
-
+                # Check if the generated response contains Arabic characters and render it properly
+                if any("\u0600" <= char <= "\u06FF" for char in generated_response):  # Check if Arabic
+                    st.markdown(f'<div style="direction: rtl; font-family: Arial, sans-serif; white-space: pre-wrap;">{generated_response}</div>', unsafe_allow_html=True)
+                else:
+                    st.markdown(generated_response)
+            
+            st.session_state.messages1.append({"role": "assistant", "content": generated_response})
 
         
 
@@ -104,7 +121,7 @@ with st.sidebar:
     
 }
     disabled_status = True
-    demo_name = st.sidebar.selectbox("### Choose a page", page_names_to_funcs.keys())#,disabled=disabled_status)
+    demo_name = st.sidebar.selectbox("### اختر المستوى", page_names_to_funcs.keys())#,disabled=disabled_status)
     
     #st.markdown("### ALI ChatBOT 🦜🔗")
     #st.markdown("<span style='color: red;'>New</span>", unsafe_allow_html=True)
@@ -116,24 +133,24 @@ with st.sidebar:
 
     with col2:  # The center column
         # Button for new chat
-        if st.button("New Chat"):
+        if st.button("محادثة جديدة"):
             st.session_state.messages = []  # Clear chat history on new chat
             st.session_state.email_drafts = []
             st.session_state["chat_history"] = []
 
     # Sidebar footer for license activation
     st.markdown("---")
-    st.write("© 2025 Teacher. All rights reserved.")
+    st.write("© 2025 أستاذ. All rights reserved.")
     st.markdown(
         """
         <p>
-        <a href="https://github.com/ammarzaarour/Chatbot-OpenAI-RAG" target="_blank">
+        <a href="https://github.com/" target="_blank">
         <img src="https://img.icons8.com/ios-glyphs/30/000000/github.png"/>
         </a>
         <a href="https://t.me/telegram_channel" target="_blank">
         <img src="https://img.icons8.com/ios-glyphs/30/000000/telegram-app.png"/>
         </a>
-        <a href="ammar.rushdi.zaarour@gmail.com" target="_blank">
+        <a href="" target="_blank">
         <img src="https://img.icons8.com/ios-glyphs/30/000000/email.png"/>
         </a>
         </p>
